@@ -4,7 +4,6 @@ snapshots:
   - name: orders_snapshot
     relation: source('jaffle_shop', 'orders')
     config:
-      schema: snapshots
       unique_key: id
       strategy: check
       check_cols: ['id', 'user_id', 'order_date', 'status']
