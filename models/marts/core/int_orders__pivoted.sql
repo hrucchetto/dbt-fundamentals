@@ -21,4 +21,8 @@ final as (
    group by 1
 )
  
-select * from final
+select 
+    * 
+from 
+    final
+    
