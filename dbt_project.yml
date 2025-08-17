@@ -36,7 +36,19 @@ models:
     marts:
       core:
         +schema: core
+        +tags: ['core']
         +materialized: table
     staging:
       +schema: staging
+      +tags: ['staging']
       +materialized: view
+
+seeds:
+  jaffle_shop:
+    +schema: seeds
+    +tags: ['seed']
+
+snapshots:
+  jaffle_shop:
+    +schema: snapshots
+    +tags: ['snapshot']

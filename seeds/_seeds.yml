@@ -1,13 +1,10 @@
 version: 2
 
 seeds:
-    - name: employees
-      description: a manual map of employees to customers
-      config:
-        schema: seeds
-      columns:
-        - name: employee_id
-          tests:
-            - unique
-            - not_null
-            
+  - name: employees
+    description: a manual map of employees to customers
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null

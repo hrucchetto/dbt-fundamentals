@@ -1,3 +1,12 @@
+{{
+    config(
+        materialized='incremental',
+        incremental_strategy='merge',
+        unique_key='order_id',
+        tags=['daily']
+    )
+}}
+
 with orders as  (
     select * from {{ ref('stg_orders' )}}
 ),
@@ -32,4 +41,7 @@ select
     * 
 from 
     final
-    
+{% if is_incremental() %}
+    where
+        order_date >= (select max(order_date) from {{this}})
+{% endif %}
