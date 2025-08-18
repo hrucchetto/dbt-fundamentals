@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: dbt_job_status
+    description: 'Model to store queries trigger by dbt'
+    config:
+      schema: internals
+      alias: dbt_job_status
+      tags: ['internals']
