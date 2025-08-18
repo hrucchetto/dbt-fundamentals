@@ -52,3 +52,7 @@ snapshots:
   jaffle_shop:
     +schema: snapshots
     +tags: ['snapshot']
+
+on-run-end:
+  - "{{ log_dbt_results(results) }}"
+  
