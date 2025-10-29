@@ -1,4 +1,6 @@
 selectors:
   - name: core_selector
     description: 'Selector to run core models' 
-    definition: 'tag:core'
+    definition:
+      tag: core
+    default: true

@@ -7,41 +7,60 @@
     )
 }}
 
-with orders as  (
-    select * from {{ ref('stg_orders' )}}
+with orders as (
+    select * from {{ ref('stg_orders') }}
 ),
 
-payments as (
-    select * from {{ ref('stg_payments') }}
+order_items as (
+    select * from {{ ref('order_items') }}
 ),
 
-order_payments as (
+order_items_summary as (
     select
-        order_id
-        , sum(case when status = 'success' then amount end) as amount
-    from 
-        payments
+        order_id,
+        sum(supply_cost) as order_cost,
+        sum(product_price) as order_items_subtotal,
+        count(order_item_id) as count_order_items,
+        sum(
+            case
+                when is_food_item then 1
+                else 0
+            end
+        ) as count_food_items,
+        sum(
+            case
+                when is_drink_item then 1
+                else 0
+            end
+        ) as count_drink_items
+    from order_items
     group by 1
 ),
 
-final as (
+compute_booleans as (
     select
-        orders.order_id
-        , orders.customer_id
-        , orders.order_date
-        , coalesce(order_payments.amount, 0) as amount
-    from 
-        orders
-    left join 
-        order_payments 
-    using (order_id)
+        orders.*,
+        order_items_summary.order_cost,
+        order_items_summary.order_items_subtotal,
+        order_items_summary.count_food_items,
+        order_items_summary.count_drink_items,
+        order_items_summary.count_order_items,
+        order_items_summary.count_food_items > 0 as is_food_order,
+        order_items_summary.count_drink_items > 0 as is_drink_order
+    from orders
+    left join
+        order_items_summary
+        on orders.order_id = order_items_summary.order_id
+),
+
+customer_order_count as (
+    select
+        *,
+        row_number() over (
+            partition by customer_id
+            order by ordered_at asc
+        ) as customer_order_number
+    from compute_booleans
 )
 
-select 
-    * 
-from 
-    final
-{% if is_incremental() %}
-    where
-        order_date >= (select max(order_date) from {{this}})
-{% endif %}
+select * from customer_order_count
