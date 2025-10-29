@@ -3,4 +3,4 @@ selectors:
     description: 'Selector to run core models' 
     definition:
       tag: core
-    default: true
+      
